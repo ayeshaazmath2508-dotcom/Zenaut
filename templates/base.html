@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}ZENAUT{% endblock %}</title>
+  <script>try{var p=JSON.parse(localStorage.getItem("zenaut_profile")||"{}");document.documentElement.dataset.theme=p.theme||"dark"}catch(e){}</script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <aside class="side" id="side">
+    <a class="brand" href="{{ url_for('dashboard') }}">ZENAUT</a>
+    <a class="me {{ 'on' if active == 'profile' }}" href="{{ url_for('profile') }}">
+      <span class="av" id="av">?</span>
+      <span class="who"><b id="me-name">Set up your profile</b><small id="me-role">Photo, name and settings</small></span>
+      <span class="gear" title="Settings">⚙</span>
+    </a>
+    <nav>
+      <a href="{{ url_for('dashboard') }}" class="{{ 'on' if not active }}">Dashboard</a>
+      {% for m in modules if m.slug != 'profile' %}
+      <a href="{{ url_for('module', slug=m.slug) }}" class="{{ 'on' if active == m.slug }}"><span class="ic">{{ m.icon }}</span>{{ m.name }}</a>
+      {% endfor %}
+    </nav>
+  </aside>
+  <div class="main">
+    <header class="top">
+      <button class="menu" id="menu" aria-label="Open menu">Menu</button>
+      <a class="topme" href="{{ url_for('profile') }}" aria-label="Profile and settings"><span class="av" id="av2">?</span></a>
+      <span class="chip {{ status.level }}"><i></i>{{ status.label }}</span>
+    </header>
+    {% block content %}{% endblock %}
+  </div>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  <script>window.ZENAUT_SCHEDULE_URL="{{ url_for('sleepcare.api_schedule') }}";</script>
+  <script src="{{ url_for('static', filename='js/sleepnotify.js') }}"></script>
+</body>
+</html>

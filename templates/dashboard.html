@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}ZENAUT · Dashboard{% endblock %}
+{% block content %}
+<section class="hero">
+  <p class="clock" id="clock">--:--:--</p>
+  <p class="clock-note" id="clock-note">Local time</p>
+  <h1>Good to see you.<br>Pick where to start.</h1>
+</section>
+<section class="grid">
+  {% for m in modules if m.slug != 'profile' %}
+  <a class="tile" href="{{ url_for('module', slug=m.slug) }}">
+    <span class="ic">{{ m.icon }}</span>
+    <h2>{{ m.name }}</h2>
+    <p>{{ m.blurb }}</p>
+  </a>
+  {% endfor %}
+</section>
+{% endblock %}

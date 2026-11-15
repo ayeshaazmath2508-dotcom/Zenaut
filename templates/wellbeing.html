@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}ZENAUT · {{ heading or 'Your wellbeing' }}{% endblock %}
+{% block content %}
+<style>{{ css }}</style>
+<section class="wb">
+  <h1>{{ heading or 'Your wellbeing' }}</h1>
+  <div class="tag">{{ title }} · stored on this device</div>
+  {% if links %}<nav>{{ links }}</nav>{% endif %}
+  {{ body }}
+  <p class="small" style="text-align:center;margin-top:2rem">Estimates for wellbeing tracking only, not a medical device. Data stays on this computer.</p>
+</section>
+{% endblock %}

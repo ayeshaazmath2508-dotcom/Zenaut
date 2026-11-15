@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}ZENAUT · Profile{% endblock %}
+{% block content %}
+<section class="page">
+  <h1>Profile and settings</h1>
+  <p>Saved on this device only.</p>
+  <div class="pform">
+    <div class="photo">
+      <span class="av big" id="av3">?</span>
+      <label class="btn alt">Choose photo<input type="file" id="photo" accept="image/*" hidden></label>
+    </div>
+    <label>Name<input id="f-name" type="text" placeholder="Your name"></label>
+    <label>Role<input id="f-role" type="text" placeholder="e.g. Flight engineer"></label>
+    <label>Mission name<input id="f-mission" type="text" placeholder="e.g. Artemis"></label>
+    <label>Mission start (date and time)<input id="f-start" type="datetime-local"></label>
+    <label>Theme
+      <select id="f-theme"><option value="dark">Dark (NASA blue)</option><option value="warm">Warm light</option></select>
+    </label>
+    <div class="row"><button class="btn" id="save" type="button">Save changes</button><span id="saved"></span></div>
+  </div>
+</section>
+{% endblock %}

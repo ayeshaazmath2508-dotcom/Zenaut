@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cosmic Journal</title>
+<style>
+:root{--bg:#0A0D21;--card:#171A38;--card2:#21244d;--lav:#CCC0FF;--mut:#9999D9;--btn:#734DE6;--txt:#fff;--line:rgba(255,255,255,.09)}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--txt);font:16px/1.55 "Helvetica Neue",Helvetica,Arial,sans-serif;position:relative;overflow-x:hidden}
+/* star field */
+.stars,.stars:after{position:fixed;inset:0;pointer-events:none;
+ background-image:
+  radial-gradient(1.2px 1.2px at 12% 18%,#fff,transparent),radial-gradient(1px 1px at 27% 72%,#cfd3ff,transparent),
+  radial-gradient(1.5px 1.5px at 41% 33%,#fff,transparent),radial-gradient(1px 1px at 58% 84%,#fff,transparent),
+  radial-gradient(1.3px 1.3px at 73% 22%,#d9ccff,transparent),radial-gradient(1px 1px at 88% 61%,#fff,transparent),
+  radial-gradient(1px 1px at 95% 12%,#fff,transparent),radial-gradient(1.2px 1.2px at 6% 90%,#cfd3ff,transparent);
+ background-size:420px 420px}
+.stars:after{content:"";background-size:610px 610px;background-position:130px 90px;animation:tw 5s ease-in-out infinite alternate}
+@keyframes tw{from{opacity:.25}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.stars:after{animation:none}}
+.wrap{position:relative;max-width:720px;margin:0 auto;padding:18px 16px 60px}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.back{color:var(--mut);text-decoration:none;font-size:.85rem;border:1px solid rgba(153,153,217,.4);border-radius:999px;padding:.3rem .8rem}
+.back:hover,.back:focus-visible{color:#fff;border-color:#fff;outline:0}
+h1{display:flex;align-items:center;gap:.6rem;font-size:1.6rem;margin:.9rem 0 .8rem;color:var(--lav)}
+h1 svg{flex-shrink:0}
+h2{font-size:1.1rem;margin:0 0 .5rem;color:var(--lav)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px}
+.tabs a{text-decoration:none;color:var(--mut);background:var(--card);border-radius:999px;padding:.5rem 1.1rem;font-weight:600;font-size:.9rem;border:1px solid transparent}
+.tabs a:hover{color:#fff}
+.tabs a.on{background:var(--btn);color:#fff;box-shadow:0 3px 10px rgba(115,77,230,.45)}
+.tabs a:focus-visible{outline:3px solid #fff}
+.card{background:var(--card);border-radius:22px;overflow:hidden;box-shadow:0 6px 22px rgba(0,0,0,.45);margin-bottom:14px}
+.pad{padding:16px}
+.cap{font-size:.75rem;color:var(--mut)}
+.mut{color:var(--mut)}
+a{color:var(--lav)}
+/* sky */
+.apod img{width:100%;height:280px;object-fit:cover;display:block}
+.apod .ph{height:220px;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#10143a,#251b57)}
+.apod .in{padding:12px 16px}
+.apod h2{color:#fff;margin:.1rem 0 .2rem}
+.apod details{margin-top:.4rem;font-size:.88rem;color:#cfd3ff}
+.apod summary{cursor:pointer;color:var(--mut)}
+.joke{font-size:1.15rem;min-height:3.2em;margin:.3rem 0 .8rem;color:#fff}
+/* buttons and fields */
+.save,.btn2{background:var(--btn);color:#fff;border:0;border-radius:6px;padding:11px 26px;font:600 .85rem/1 inherit;letter-spacing:.09em;cursor:pointer;
+ box-shadow:0 3px 10px rgba(115,77,230,.45)}
+.save{display:block;margin:14px auto 4px}
+.save:hover,.btn2:hover{filter:brightness(1.12)}
+.save:focus-visible,.btn2:focus-visible{outline:3px solid #fff}
+.ghost{background:transparent;color:var(--lav);border:1px solid rgba(153,153,217,.45);border-radius:999px;padding:.3rem .8rem;font:inherit;font-size:.8rem;cursor:pointer}
+.ghost:hover{color:#fff;border-color:#fff}
+input[type=text],select,textarea{width:100%;border:0;border-bottom:2px solid var(--btn);border-radius:10px 10px 0 0;background:var(--card2);color:#fff;font:inherit;padding:11px 12px}
+textarea{min-height:130px;resize:vertical}
+input::placeholder,textarea::placeholder{color:#8f93c9}
+input:focus,textarea:focus,select:focus{outline:0;background:#2a2e5e}
+label.l{display:block;font-size:.8rem;color:var(--mut);margin:12px 0 4px}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1;min-width:140px}
+/* chips: radios and checkboxes */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips label{cursor:pointer}
+.chips input{position:absolute;opacity:0;width:0;height:0}
+.chips span{display:inline-block;padding:.3rem .8rem;border-radius:999px;background:var(--card2);color:var(--mut);font-size:.85rem;border:1px solid transparent}
+.chips input:checked+span{background:var(--btn);color:#fff}
+.chips input:focus-visible+span{outline:3px solid #fff}
+.chips.mood span{font-size:1.4rem;padding:.15rem .6rem}
+.chips.mood input:checked+span{background:var(--btn)}
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat{background:var(--card);border-radius:16px;padding:12px;text-align:center}
+.stat b{display:block;font-size:1.5rem;color:var(--lav)}.stat small{color:var(--mut)}
+.tag{display:inline-block;font-size:.72rem;padding:.1rem .6rem;border-radius:999px;background:var(--card2);color:var(--lav);margin:0 4px 4px 0}
+/* entries */
+.entry{padding:14px 16px;border-top:1px solid var(--line)}
+.entry:first-child{border:0}
+.entry .h{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.entry .d{font-weight:600}.entry .a{color:var(--mut);font-size:.82rem}
+.entry .t{color:#dfe2ff;white-space:pre-wrap;margin:.3rem 0}
+.entry ul{margin:.2rem 0 .3rem 1.1rem;padding:0;color:#cfd3ff;font-size:.9rem}
+.acts{display:flex;gap:6px;flex-shrink:0}
+.acts form{margin:0}
+.star{color:#ffd76a}
+.none{padding:16px;color:var(--mut)}
+.filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.filter input,.filter select{flex:1;min-width:140px}
+.foot{color:var(--mut);font-size:.75rem;text-align:center;margin-top:1.4rem}
+.letter{padding:14px 16px;border-top:1px solid var(--line)}.letter:first-child{border:0}
+.people{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.person{display:flex;align-items:center;gap:6px;background:var(--card2);border-radius:999px;padding:.25rem .3rem .25rem .8rem;font-size:.88rem}
+.person form{margin:0}.person button{background:none;border:0;color:var(--mut);cursor:pointer;font-size:1rem;line-height:1;padding:.1rem .4rem}
+.person button:hover{color:#fff}
+</style>
+</head>
+<body>
+<div class="stars" aria-hidden="true"></div>
+<div class="wrap">
+  <div class="bar"><a class="back" href="{{ back }}">&larr; Back to ZENAUT</a></div>
+  <h1>
+    <svg width="34" height="34" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17" fill="#e9ecff"/><rect x="8" y="11" width="24" height="18" rx="9" fill="#1b1f4a"/><ellipse cx="15" cy="17" rx="4" ry="2.4" fill="#6f78ff" opacity=".7"/><rect x="2" y="17" width="4" height="8" rx="2" fill="#9aa0d8"/><rect x="34" y="17" width="4" height="8" rx="2" fill="#9aa0d8"/></svg>
+    ✦ Cosmic Journal
+  </h1>
+  <nav class="tabs" aria-label="Sections">
+    {% for k, t in tabs %}<a href="{{ url_for('cosmic.page', tab=k) }}" class="{{ 'on' if k == tab }}"{% if k == tab %} aria-current="page"{% endif %}>{{ t }}</a>{% endfor %}
+  </nav>
+
+{# =============================================================== SKY & JOKES #}
+{% if tab == 'sky' %}
+  {% macro art() %}<svg viewBox="0 0 400 200" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="400" height="200" fill="none"/><g fill="#fff"><circle cx="40" cy="30" r="1.5"/><circle cx="90" cy="120" r="1.2"/><circle cx="150" cy="50" r="1.8"/><circle cx="210" cy="150" r="1.2"/><circle cx="260" cy="40" r="1.4"/><circle cx="330" cy="110" r="1.6"/><circle cx="370" cy="30" r="1.2"/><circle cx="300" cy="170" r="1.1"/><circle cx="120" cy="170" r="1.3"/></g><g stroke="#8f93ff" stroke-width="1" opacity=".6"><line x1="150" y1="50" x2="210" y2="90"/><line x1="210" y1="90" x2="260" y2="40"/><line x1="260" y1="40" x2="330" y2="110"/></g><circle cx="320" cy="55" r="22" fill="#e9ecff"/><circle cx="330" cy="50" r="22" fill="#171A38"/><circle cx="85" cy="140" r="26" fill="#734DE6"/><ellipse cx="85" cy="140" rx="42" ry="8" fill="none" stroke="#CCC0FF" stroke-width="2" transform="rotate(-18 85 140)"/></svg>{% endmacro %}
+  <div class="card apod">
+    {% if ap %}
+      {% if img %}<img src="{{ img }}" alt="{{ ap.title }}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="ph" style="display:none">{{ art() }}</div>
+      {% else %}<div class="ph">{{ art() }}</div>{% endif %}
+      <div class="in">
+        <div class="cap">NASA Picture of the Day{% if ap.apod_date %} · {{ ap.apod_date }}{% endif %}</div>
+        <h2>{{ ap.title }}</h2>
+        {% if ap.explanation %}<details><summary>About this picture</summary><p>{{ ap.explanation }}</p></details>{% endif %}
+        <div class="cap">Credit: {{ ap.credit or "NASA" }}{% if link %} · <a href="{{ link }}" target="_blank" rel="noopener">Open full size</a>{% endif %}</div>
+      </div>
+    {% else %}
+      <div class="ph">{{ art() }}</div>
+      <div class="in"><div class="cap">NASA Picture of the Day</div><h2>{{ offline }}</h2>
+        <div class="cap">The live picture appears here the next time this computer is online. It is then saved on this device.</div></div>
+    {% endif %}
+  </div>
+
+  <div class="card pad">
+    <h2>🚀 Space joke</h2>
+    <div class="joke" id="joke" aria-live="polite">{{ joke }}</div>
+    <button class="btn2" id="more" type="button">ANOTHER JOKE</button>
+  </div>
+  <p class="foot">The picture is fetched live from NASA when you are online and saved here. The jokes are built in and work offline.</p>
+  <script>
+  (function(){
+    var J={{ jokes|tojson }},last=J.indexOf({{ joke|tojson }});
+    document.getElementById("more").onclick=function(){
+      var i;do{i=Math.floor(Math.random()*J.length);}while(i===last&&J.length>1);
+      last=i;document.getElementById("joke").textContent=J[i];
+    };
+  })();
+  </script>
+
+{# =============================================================== JOURNAL #}
+{% elif tab == 'journal' %}
+  <div class="stats">
+    <div class="stat"><b>{{ total }}</b><small>entries</small></div>
+    <div class="stat"><b>{{ streak }}{% if streak %} 🔥{% endif %}</b><small>day streak</small></div>
+    <div class="stat"><b>{{ avg }}</b><small>avg mood (7 days)</small></div>
+  </div>
+  {% if spark %}<div class="card pad"><div class="cap">Mood trend (last entries)</div>{{ spark }}</div>{% endif %}
+
+  <form method="post" action="{{ url_for('cosmic.add_entry') }}" class="card pad">
+    <h2>✎ New entry</h2>
+    <label class="l" for="title">Title (optional)</label>
+    <input type="text" id="title" name="title" maxlength="80" placeholder="e.g. First sunrise over the Pacific">
+
+    <label class="l">How are you feeling?</label>
+    <div class="chips mood" role="radiogroup" aria-label="Mood">
+      {% for n, e in moods.items() %}<label title="{{ mood_words[n] }}"><input type="radio" name="mood" value="{{ n }}"><span>{{ e }}</span></label>{% endfor %}
+    </div>
+    <label class="l">Energy</label>
+    <div class="chips" role="radiogroup" aria-label="Energy">
+      {% for n, w in [(1,'Drained'),(2,'Low'),(3,'Steady'),(4,'Good'),(5,'Charged')] %}<label><input type="radio" name="energy" value="{{ n }}"><span>{{ w }}</span></label>{% endfor %}
+    </div>
+    <label class="l">What was today about?</label>
+    <div class="chips">
+      {% for t in tags %}<label><input type="checkbox" name="tags" value="{{ t }}"><span>{{ t }}</span></label>{% endfor %}
+    </div>
+
+    <label class="l" for="text">Your entry</label>
+    <textarea id="text" name="text" placeholder="How was your day? Write under the stars..."></textarea>
+    <div class="cap" style="margin-top:6px">Prompt: <span id="pr">{{ prompt }}</span>
+      <button class="ghost" type="button" id="newp">New prompt</button> <button class="ghost" type="button" id="usep">Use it</button></div>
+
+    <label class="l">Three good things (gratitude)</label>
+    <input type="text" name="gratitude" maxlength="200" placeholder="1.">
+    <input type="text" name="gratitude" maxlength="200" placeholder="2." style="margin-top:6px">
+    <input type="text" name="gratitude" maxlength="200" placeholder="3." style="margin-top:6px">
+
+    <button class="save">SAVE ENTRY</button>
+    {% if ap_title %}<div class="cap" style="text-align:center">Tagged with today's sky: 🌌 {{ ap_title }}</div>{% endif %}
+  </form>
+  <script>
+  (function(){
+    var P={{ prompts|tojson }},pr=document.getElementById("pr"),ta=document.getElementById("text");
+    document.getElementById("newp").onclick=function(){pr.textContent=P[Math.floor(Math.random()*P.length)];};
+    document.getElementById("usep").onclick=function(){
+      if(ta.value&&ta.value.slice(-1)!=="\n")ta.value+="\n\n";ta.value+=pr.textContent+"\n";ta.focus();
+    };
+  })();
+  </script>
+
+  <form method="get" class="filter" role="search">
+    <input type="hidden" name="tab" value="journal">
+    <input type="text" name="q" value="{{ q }}" placeholder="Search your entries" aria-label="Search entries">
+    <select name="tag" aria-label="Filter by tag" onchange="this.form.submit()">
+      <option value="">All tags</option>
+      {% for t in tags %}<option value="{{ t }}" {{ 'selected' if t == tag }}>{{ t }}</option>{% endfor %}
+    </select>
+    <button class="btn2" type="submit">FIND</button>
+  </form>
+
+  <div class="card">
+    {% for e in entries %}
+      <div class="entry">
+        <div class="h">
+          <div>
+            <div class="d">{% if e.mood %}{{ moods[e.mood] }} {% endif %}{{ e.title or e.ts_pretty }}</div>
+            <div class="a">{% if e.title %}{{ e.ts_pretty }}{% endif %}{% if e.energy %}{% if e.title %} · {% endif %}energy {{ e.energy }}/5{% endif %}{% if e.apod %}{% if e.title or e.energy %} · {% endif %}🌌 {{ e.apod }}{% endif %}</div>
+          </div>
+          <div class="acts">
+            <form method="post" action="{{ url_for('cosmic.fav_entry', eid=e.id) }}"><input type="hidden" name="q" value="{{ q }}"><input type="hidden" name="tag" value="{{ tag }}">
+              <button class="ghost" aria-label="{{ 'Remove star' if e.fav else 'Star this entry' }}">{% if e.fav %}<span class="star">★</span>{% else %}☆{% endif %}</button></form>
+            <form method="post" action="{{ url_for('cosmic.delete_entry', eid=e.id) }}" onsubmit="return confirm('Delete this entry?')"><input type="hidden" name="q" value="{{ q }}"><input type="hidden" name="tag" value="{{ tag }}">
+              <button class="ghost" aria-label="Delete entry">Delete</button></form>
+          </div>
+        </div>
+        {% if e.tags %}<div style="margin-top:4px">{% for t in e.tags %}<span class="tag">{{ t }}</span>{% endfor %}</div>{% endif %}
+        {% if e.text %}<div class="t">{{ e.text }}</div>{% endif %}
+        {% if e.gratitude %}<div class="cap">Grateful for</div><ul>{% for g in e.gratitude %}<li>{{ g }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+    {% else %}
+      <div class="none">{% if q or tag %}No entries match your search.{% else %}No entries yet. The first page of your mission log is waiting.{% endif %}</div>
+    {% endfor %}
+  </div>
+  <p class="foot">Entries stay on this device and work fully offline.</p>
+
+{# =============================================================== LOVED ONES #}
+{% else %}
+  <div class="card pad">
+    <h2>♥ Your people</h2>
+    {% if people %}
+    <div class="people">
+      {% for p in people %}<span class="person">{{ p.name }}{% if p.relation %} <span class="mut">· {{ p.relation }}</span>{% endif %}
+        <form method="post" action="{{ url_for('cosmic.delete_person', pid=p.id) }}" onsubmit="return confirm('Remove this person from your list?')"><button aria-label="Remove {{ p.name }}">&times;</button></form></span>{% endfor %}
+    </div>
+    {% else %}<p class="mut">Add the people you want to write to.</p>{% endif %}
+    <form method="post" action="{{ url_for('cosmic.add_person') }}" class="row">
+      <input type="text" name="name" placeholder="Name" maxlength="60" required aria-label="Name">
+      <input type="text" name="relation" placeholder="Who are they? (Mum, partner, friend...)" maxlength="40" aria-label="Relationship">
+      <button class="btn2" style="flex:0 0 auto">ADD PERSON</button>
+    </form>
+  </div>
+
+  <form method="post" action="{{ url_for('cosmic.send_letter') }}" class="card pad">
+    <h2>✉ Write a message</h2>
+    <label class="l" for="to">To</label>
+    <select id="to" name="to">
+      <option value="">My loved ones (everyone)</option>
+      {% for p in people %}<option value="{{ p.id }}">{{ p.name }}</option>{% endfor %}
+    </select>
+    <label class="l">Need a way to start?</label>
+    <div class="chips" id="starters">
+      {% for k, v in starters.items() %}<button type="button" class="ghost" data-t="{{ v }}">{{ k }}</button>{% endfor %}
+    </div>
+    <label class="l" for="ltext">Message</label>
+    <textarea id="ltext" name="text" required placeholder="Write your message here..."></textarea>
+    <button class="save">SAVE MESSAGE</button>
+    <div class="cap" style="text-align:center">Saved on this device and queued in the outbox, ready to send when a link is available.</div>
+  </form>
+  <script>
+  document.querySelectorAll("#starters button").forEach(function(b){
+    b.onclick=function(){var t=document.getElementById("ltext");t.value=(t.value?t.value+"\n\n":"")+b.dataset.t+" ";t.focus();};
+  });
+  </script>
+
+  <div class="card">
+    {% for l in letters %}
+      <div class="letter">
+        <div class="h" style="display:flex;justify-content:space-between;gap:10px">
+          <div><div class="d" style="font-weight:600">To {{ l.to_name }}</div><div class="cap">{{ l.ts_pretty }} · queued for the next sync</div></div>
+          <form method="post" action="{{ url_for('cosmic.delete_letter', lid=l.id) }}" onsubmit="return confirm('Remove this message from your list? A copy already in the outbox stays there.')" style="margin:0"><button class="ghost">Remove</button></form>
+        </div>
+        <div style="white-space:pre-wrap;color:#dfe2ff;margin-top:.3rem">{{ l.text }}</div>
+      </div>
+    {% else %}
+      <div class="none">No messages yet. Write your first one above.</div>
+    {% endfor %}
+  </div>
+  <p class="foot">Everything here is stored on this device. There is no live link to Earth yet, so messages wait in the outbox folder.</p>
+{% endif %}
+</div>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}ZENAUT · {{ item.name if item else 'Not found' }}{% endblock %}
+{% block content %}
+<section class="page">
+  {% if item %}
+  <h1><span class="ic">{{ item.icon }}</span>{{ item.name }}</h1>
+  <p>{{ item.blurb }}</p>
+  <div class="empty">This section is empty. We will build it next.</div>
+  {% else %}
+  <h1>Page not found</h1>
+  <p>That page does not exist. Go back to the dashboard.</p>
+  {% endif %}
+  <a class="btn" href="{{ url_for('dashboard') }}">Back to dashboard</a>
+</section>
+{% endblock %}
